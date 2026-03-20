@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                              String   @id
+  username                        String   @unique
+  email                           String   @unique
+  password                        String
+  isLogged                        Boolean  @default(false)
+  avatarUrl                       String
+  name                            String
+  Follow_Follow_followerIdToUser  Follow[] @relation("Follow_followerIdToUser")
+  Follow_Follow_followingIdToUser Follow[] @relation("Follow_followingIdToUser")
+  Like                            Like[]
+  Tweet                           Tweet[]
+}
+
+
+model Follow {
+  id                            String @id
+  followerId                    String
+  followingId                   String
+  User_Follow_followerIdToUser  User   @relation("Follow_followerIdToUser", fields: [followerId], references: [id], onDelete: Cascade)
+  User_Follow_followingIdToUser User   @relation("Follow_followingIdToUser", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model Like {
+  id      String @id
+  userId  String
+  tweetId String
+  Tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+  User    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tweetId])
+}
+
+model Tweet {
+  id            String   @id
+  content       String
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+  parentTweetId String?
+  type          String   @default("T")
+  Like          Like[]
+  Tweet         Tweet?   @relation("TweetToTweet", fields: [parentTweetId], references: [id])
+  other_Tweet   Tweet[]  @relation("TweetToTweet")
+  User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+

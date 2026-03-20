@@ -1,25 +1,25 @@
-import axios from "axios";
-import {ResponseDto} from "../dtos/ResponseDto";
+import { prisma } from "../database/prisma.database";
+import { ResponseDto } from "../dto/ResponseDto";
 
-const api = axios.create({
-  baseURL: 'https://growtweeter.vercel.app',
-}); 
+export class TweetService {
+  async create(content: string, userId: string): Promise<ResponseDto> {
+    try {
+      // O seu código "antigo" (que funciona!)
+      const tweet = await prisma.tweet.create({
+        data: { content, userId, type: "T" }
+      });
 
-class ApiService {
-  public handleError(error: any): ResponseDto {
-    const result = {
-        ok: false
-    }
-    if (error.response?.data) {
-        return {
-            ...result,
-            message:error.response.data.message
-        };
-    }
-    return {
-        ...result,
-        message: error.toString()
+      // O retorno padrão do projeto novo
+      return {
+        ok: true,
+        message: "Tweet postado com sucesso!",
+        data: tweet
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        message: "Erro ao criar tweet no banco."
+      };
     }
   }
 }
-export default new ApiService();
