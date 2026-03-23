@@ -13,7 +13,7 @@ model User {
   name     String
   email     String   @unique
   password  String
-  avatarUrl String 
+  avatarUrl String? 
   isLogged Boolean  @default(false)
   tweets    Tweet[]
   likes     Like[]
