@@ -3,7 +3,6 @@ import type { UserDTO } from "../dtos/user.dto";
 
 export class UserService {
 async create(data: UserDTO) {
-    // 1. Verifica se o username ou email já estão em uso
     const existingUser = await prisma.user.findFirst({
         where: {
             OR: [
