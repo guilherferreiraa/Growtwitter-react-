@@ -53,23 +53,14 @@ export function Feed() {
   }, [token, loggedUser.id]);
 
 useEffect(() => {
-
     if (!token) return;
-
     const inicializarFeed = async () => {
-
       try {
-
         await carregarTweets();
-
       } catch (err) {
-
         console.error("Erro ao carregar dados iniciais", err);
-
       }
-
     };
-
     inicializarFeed();
 
   }, [carregarTweets, token]);
@@ -88,6 +79,19 @@ const handleLike = async (tweetId: string) => {
     console.error("Erro ao curtir/descurtir:", e);
   }
 };
+
+const handleReply = async (tweetId: string) => {
+    const texto = prompt("Digite sua resposta:");
+    if (!texto || !texto.trim()) return;
+
+    try {
+      await api.post(`/auth/tweets/${tweetId}/reply`, { content: texto });
+      await carregarTweets(); 
+    } catch (error) {
+      console.error("Erro ao responder:", error);
+      alert("Erro ao enviar resposta.");
+    }
+  };
 
   const handleTweet = async () => {
     if (!content.trim()) return;
@@ -165,7 +169,8 @@ const handleLike = async (tweetId: string) => {
               key={tweet.id} 
               tweet={tweet} 
               theme={theme} 
-              onLike={handleLike} 
+              onLike={handleLike}
+              onReply={handleReply}
             />
           ))}
         </section>

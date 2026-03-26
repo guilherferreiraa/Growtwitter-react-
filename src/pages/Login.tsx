@@ -5,10 +5,11 @@ import api from "../services/apiService";
 export function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -19,10 +20,17 @@ export function Login() {
       });
 
       if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data.data));
+        const dadosApi = response.data.data;
+        const usuarioCompleto = {
+          ...dadosApi,
+          username: username, 
+          avatarUrl: `https://github.com/${username}.png`,
+        };
 
-        if (response.data.data.token) {
-          localStorage.setItem("token", response.data.data.token);
+        localStorage.setItem("user", JSON.stringify(usuarioCompleto));
+
+        if (dadosApi.token) {
+          localStorage.setItem("token", dadosApi.token);
         }
 
         alert("Bem-vindo ao GrowTwitter!");
@@ -49,6 +57,16 @@ export function Login() {
         <p style={subtitleStyle}>Digite seus dados de acesso</p>
 
         <form onSubmit={handleLogin} style={formStyle}>
+          {}
+          <input
+            type="text"
+            placeholder="Seu Username do GitHub"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            style={inputStyle}
+            required
+          />
+
           <input
             type="email"
             placeholder="E-mail"
