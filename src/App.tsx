@@ -1,26 +1,29 @@
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Login } from "./pages/Login";
+import { Feed } from "./pages/Feed"; 
+import type { ReactNode } from "react";
 
-
-const theme = createTheme({
-  palette: {
-    mode: 'light', 
-    primary: {
-      main: '#1DA1F2', 
-    },
-  },
-});
+function PrivateRoute({ children }: { children: ReactNode }) {
+  const user = localStorage.getItem("user");
+  return user ? <>{children}</> : <Navigate to="/login" />;
+}
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      {}
-      <CssBaseline />
+    <Routes>
+      <Route path="/login" element={<Login />} />
       
-      <div>
-        <h1>Growtwitter - Em Construção 🚀</h1>
-        <p>Próximo passo: Configurar as rotas!</p>
-      </div>
-    </ThemeProvider>
+      <Route 
+        path="/home" 
+        element={
+          <PrivateRoute>
+            <Feed />
+          </PrivateRoute>
+        } 
+      />
+
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
   );
 }
 

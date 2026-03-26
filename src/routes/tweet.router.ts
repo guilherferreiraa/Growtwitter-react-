@@ -1,13 +1,12 @@
 import { Router } from "express";
-import { TweetController } from "../controllers/tweetControler";
+import { TweetController } from "../controllers/tweetController";
 import { authMiddleware } from "../middleware/auth.middleware";
 
 const tweetRouter = Router();
 const tweetController = new TweetController();
 
 tweetRouter.get("/tweets", authMiddleware, (req, res) => tweetController.index(req, res)); 
-tweetRouter.get("/tweets/feed", authMiddleware, (req, res) => tweetController.feed(req, res));
-
+tweetRouter.get("/tweets/feed", authMiddleware, (req, res) => tweetController.getFeed(req, res));
 tweetRouter.post("/tweets", authMiddleware, (req, res) => tweetController.handle(req, res));
 tweetRouter.delete("/tweets/:id", authMiddleware, (req, res) => tweetController.destroy(req, res));
 tweetRouter.post("/tweets/:id/reply", authMiddleware, (req, res) => tweetController.reply(req, res));
