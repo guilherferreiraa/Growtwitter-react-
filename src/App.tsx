@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Feed } from "./pages/Feed"; 
+import { Search } from "./pages/search";
 import type { ReactNode } from "react";
 
 function PrivateRoute({ children }: { children: ReactNode }) {
@@ -18,6 +19,15 @@ function App() {
         element={
           <PrivateRoute>
             <Feed />
+          </PrivateRoute>
+        } 
+      />
+
+      <Route 
+        path="/explore" 
+        element={
+          <PrivateRoute>
+            <Search />
           </PrivateRoute>
         } 
       />

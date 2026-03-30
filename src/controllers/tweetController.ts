@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
 import { TweetService } from "../services/tweetService";
+import { prisma } from "../database/prisma.database";
+
 
 const tweetService = new TweetService();
 
@@ -85,6 +87,34 @@ export class TweetController {
       return res.status(400).json({ error: "Erro ao responder tweet." });
     }
   }
+
+async listReplies(req: Request, res: Response) {
+  const { id } = req.params; 
+
+  if(!id) {
+    return res.status(400).json({ error: "ID do tweet é obrigatório!"})
+  }
+
+  try {
+    const replies = await prisma.tweet.findMany({
+      where: {
+        parentTweetId: String(id),
+      },
+      include: {
+        user: true,   
+        likes: true,  
+      },
+      orderBy: {
+        createdAt: 'asc', 
+      }
+    });
+
+    return res.status(200).json(replies);
+  } catch {
+    return res.status(500).json({ error: "Erro ao buscar respostas" });
+  }
+}
+
 
   async getFeed(req: Request, res: Response) {
     try {

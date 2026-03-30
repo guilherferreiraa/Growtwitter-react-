@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface SideBarProps {
   loggedUser: any;
@@ -6,6 +7,8 @@ interface SideBarProps {
 }
 
 export function SideBar({ loggedUser, theme }: SideBarProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const FOTO_PADRAO = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   const handleLogout = () => {
@@ -13,29 +16,61 @@ export function SideBar({ loggedUser, theme }: SideBarProps) {
     window.location.href = "/";
   };
 
+  const isHome = location.pathname === "/home";
+  const isExplore = location.pathname === "/explore";
+
   return (
     <aside style={{ ...sidebarStyle, borderRightColor: theme.border }}>
       <div style={{ flex: 1 }}>
         <h2 style={{ color: "#1D9BF0", marginBottom: "30px" }}>growtweet</h2>
         <nav style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
-          <div style={{ fontWeight: "bold", color: "#1D9BF0", cursor: "pointer" }}>
+          <div
+            onClick={() => navigate("/home")}
+            style={{
+              fontWeight: isHome ? "bold" : "normal",
+              color: isHome ? "#1D9BF0" : theme.text,
+              cursor: "pointer",
+            }}
+          >
             🏠 Página Inicial
           </div>
-          <div style={{ cursor: "pointer" }}>🔍 Explorar</div>
-          <div style={{ cursor: "pointer" }}>👤 Perfil</div>
+
+          <div
+            onClick={() => navigate("/explore")}
+            style={{
+              fontWeight: isExplore ? "bold" : "normal",
+              color: isExplore ? "#1D9BF0" : theme.text,
+              cursor: "pointer",
+            }}
+          >
+            🔍 Explorar
+          </div>
+
+          <div style={{ cursor: "pointer", color: theme.text }}>👤 Perfil</div>
         </nav>
       </div>
 
       <div style={{ padding: "10px", marginBottom: "20px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "15px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            marginBottom: "15px",
+          }}
+        >
           <img
-             src={`https://github.com/${loggedUser.username}.png`}
+            src={`https://github.com/${loggedUser.username}.png`}
             style={avatarStyle}
             onError={(e) => (e.currentTarget.src = FOTO_PADRAO)}
           />
           <div>
-            <div style={{ fontSize: "0.9rem", fontWeight: "bold" }}>{loggedUser.name}</div>
-            <div style={{ fontSize: "0.8rem", color: "#71767b" }}>@{loggedUser.username}</div>
+            <div style={{ fontSize: "0.9rem", fontWeight: "bold" }}>
+              {loggedUser.name}
+            </div>
+            <div style={{ fontSize: "0.8rem", color: "#71767b" }}>
+              @{loggedUser.username}
+            </div>
           </div>
         </div>
         <button onClick={handleLogout} style={logoutButtonStyle}>
@@ -69,5 +104,5 @@ const logoutButtonStyle: React.CSSProperties = {
   borderRadius: "20px",
   cursor: "pointer",
   fontSize: "0.8rem",
-  width: "100%"
+  width: "100%",
 };
