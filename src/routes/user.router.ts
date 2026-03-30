@@ -11,5 +11,4 @@ router.get("/users", authMiddleware, controller.listAll);
 router.delete("/users/:id", authMiddleware, controller.delete);
 router.post("/logout", authMiddleware, controller.logout); 
 
-
 export default router;

@@ -18,6 +18,7 @@ export function SideBar({ loggedUser, theme }: SideBarProps) {
 
   const isHome = location.pathname === "/home";
   const isExplore = location.pathname === "/explore";
+  const isProfile = location.pathname === "/profile"; // Nova constante
 
   return (
     <aside style={{ ...sidebarStyle, borderRightColor: theme.border }}>
@@ -46,7 +47,16 @@ export function SideBar({ loggedUser, theme }: SideBarProps) {
             🔍 Explorar
           </div>
 
-          <div style={{ cursor: "pointer", color: theme.text }}>👤 Perfil</div>
+          <div
+            onClick={() => navigate("/profile")}
+            style={{
+              fontWeight: isProfile ? "bold" : "normal",
+              color: isProfile ? "#1D9BF0" : theme.text,
+              cursor: "pointer",
+            }}
+          >
+            👤 Perfil
+          </div>
         </nav>
       </div>
 

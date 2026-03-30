@@ -134,4 +134,26 @@ async listReplies(req: Request, res: Response) {
       return res.status(500).json({ ok: false, message: "Erro ao carregar feed." });
     }
   }
+
+  // No arquivo tweetController.ts
+async getByUser(req: any, res: any) {
+  try {
+    const { userId } = req.params;
+
+    // Se estiver usando Prisma, o comando é parecido com este:
+    const tweets = await prisma.tweet.findMany({
+      where: { userId: userId },
+      include: {
+        likes: true,
+        _count: { select: { replies: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return res.json(tweets);
+  } catch {
+    return res.status(500).json({ error: "Erro ao buscar tweets do usuário" });
+  }
+}
+
 }

@@ -14,4 +14,6 @@ tweetRouter.post("/tweets/:id/reply", authMiddleware, (req, res) => tweetControl
 tweetRouter.post("/like/:id", authMiddleware, (req, res) => tweetController.like(req, res));
 tweetRouter.delete("/unlike/:id", authMiddleware, (req, res) => tweetController.unlike(req, res));
 
+tweetRouter.get("/tweets/user/:userId", authMiddleware, (req, res) => tweetController.getByUser(req, res));
+
 export default tweetRouter;
