@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Feed } from "./pages/Feed";
 import { Search } from "./pages/search";
-import { Profile } from "./pages/perfil";
+import { Profile } from "./pages/Profile";
 import type { ReactNode } from "react";
 
 function PrivateRoute({ children }: { children: ReactNode }) {
