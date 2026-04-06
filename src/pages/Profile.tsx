@@ -6,9 +6,10 @@ import { TweetCard } from "../components/TweetCard";
 
 export function Profile() {
   const navigate = useNavigate();
-  const { id } = useParams(); // Pega o ID da URL se existir
+  const { id } = useParams(); 
   const [userTweets, setUserTweets] = useState<any[]>([]);
   const [profileUser, setProfileUser] = useState<any>(null);
+  
 
   const userRaw = localStorage.getItem("user");
   const loggedUser = userRaw ? JSON.parse(userRaw) : null;
@@ -22,35 +23,43 @@ export function Profile() {
   };
 
 useEffect(() => {
-  const carregarDadosDoPerfil = async () => {
-    // Usamos o id da URL ou o id do usuário logado
-    const targetId = id || loggedUser?.id;
-    if (!targetId) return;
+  const carregarDados = async () => {
+    const targetId = id || JSON.parse(localStorage.getItem("user") || "{}")?.id;
+
+    if (!targetId || targetId === "undefined") return;
 
     try {
-      // 1. Busca os tweets do usuário (Ajustado para bater com o router)
-      // Removi o "/auth" da frente porque no seu router a rota começa com "/tweets"
-      const tweetRes = await api.get(`/tweets/user/${targetId}`);
-      
-      const dadosVindos = tweetRes.data.data || tweetRes.data;
-      setUserTweets(Array.isArray(dadosVindos) ? dadosVindos : []);
-
-      const userRes = await api.get(`/users`); 
-      const todosUsuarios = userRes.data.data || userRes.data;
-      const usuarioEncontrado = todosUsuarios.find((u: any) => u.id === targetId);
-      
-      if (usuarioEncontrado) {
-        setProfileUser(usuarioEncontrado);
-      }
+      const [tweetRes, userRes] = await Promise.all([
+        api.get(`/auth/tweets/user/${targetId}`),
+        api.get(`/auth/users/${targetId}`)
+      ]);
+      setUserTweets(tweetRes.data.data || tweetRes.data);
+      setProfileUser(userRes.data);
     } catch (e) {
       console.error("Erro ao carregar perfil:", e);
     }
   };
 
-  carregarDadosDoPerfil();
-}, [id, loggedUser?.id]);
+  carregarDados();
+}, [id]);
 
-  const displayUser = profileUser || loggedUser;
+  const handleLike = async (tweetId: string) => {
+  try {
+    const t = userTweets.find(item => item.id === tweetId);
+    const jaCurtiu = t?.likes?.some((l: any) => l.userId === loggedUser?.id);
+
+    if (jaCurtiu) {
+      await api.delete(`/auth/unlike/${tweetId}`);
+    } else {
+      await api.post(`/auth/like/${tweetId}`);
+    }
+
+  } catch (err) {
+    console.error("Erro ao curtir:", err);
+  }
+};
+
+const displayUser = profileUser || loggedUser;
   if (!displayUser) return null;
 
   return (
@@ -129,33 +138,35 @@ useEffect(() => {
         <section
           style={{ borderTop: `1px solid ${theme.border}`, marginTop: "10px" }}
         >
-          {userTweets.length > 0 ? (
-            userTweets.map((tweet: any) => (
-              <TweetCard
-                key={tweet.id}
-                theme={theme}
-                onLike={() => {}}
-                tweet={{
-                  id: tweet.id,
-                  nome: displayUser.name,
-                  arroba: displayUser.username,
-                  texto: tweet.content || tweet.texto,
-                  likes: 0, // Removido conforme pedido
-                  euCurti: false,
-                  quantidadeRespostas: 0,
-                }}
-              />
-            ))
-          ) : (
-            <div
-              style={{ padding: "40px", textAlign: "center", color: "#71767b" }}
-            >
-              Este usuário ainda não possui tweets.
-            </div>
-          )}
+{userTweets.length > 0 ? (
+  userTweets
+    .filter((t: any) => !t.tweet_original_id) 
+    .map((tweet: any) => (
+      
+      <TweetCard
+        key={tweet.id}
+        theme={theme}
+        onLike={() => handleLike(tweet.id)} 
+        tweet={{
+          id: tweet.id,
+          nome: profileUser?.name || loggedUser?.name,
+          arroba: profileUser?.username || loggedUser?.username,
+          texto: tweet.content || tweet.texto,
+          likes: tweet.likes?.length || 0,
+          euCurti: tweet.likes?.some((l: any) => l.userId === loggedUser?.id) || false,
+          quantidadeRespostas: tweet.replies?.length || 0,
+        }}
+      />
+    ))
+) : (
+  <div style={{ padding: "40px", textAlign: "center", color: "#71767b" }}>
+    Nenhum tweet encontrado.
+  </div>
+)}
         </section>
       </main>
       <aside style={{ width: "350px" }} />
     </div>
   );
+  
 }

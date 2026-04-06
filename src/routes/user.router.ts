@@ -8,6 +8,7 @@ const controller = new UserController();
 router.post("/signup", controller.signup);
 router.post("/login", controller.login);
 router.get("/users", authMiddleware, controller.listAll);
+router.get("/users/:id", authMiddleware, controller.show);
 router.delete("/users/:id", authMiddleware, controller.delete);
 router.post("/logout", authMiddleware, controller.logout); 
 

@@ -2,6 +2,7 @@
 import type { Request, Response } from "express";
 import { UserService } from "../services/userService";
 import jwt from "jsonwebtoken";
+import { prisma } from "../database/prisma.database";
 const userService = new UserService();
 
 export class UserController {
@@ -82,6 +83,26 @@ export class UserController {
       });
     } catch  {
       return res.status(400).json({ ok: false, message: "Erro ao deletar usuário." });
+    }
+  }
+
+  async show(req: Request, res: Response) {
+    try {
+      const id = String(req.params.id);
+      const user = await prisma.user.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          name: true,
+          username: true,
+        },
+      });
+      if (!user) {
+        return res.status(404).json({ok: false, message: "Erro ao encontrar usuário"})
+      }
+      return res.status(200).json(user)
+    } catch {
+      return res.status(500).json({ok: false, message: "Erro ao buscar usuário"})
     }
   }
 }

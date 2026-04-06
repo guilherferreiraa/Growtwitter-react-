@@ -30,6 +30,7 @@ export function TweetCard({
 }: TweetCardProps) {
   const FOTO_PADRAO = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+  
 return (
     <div
       style={{
