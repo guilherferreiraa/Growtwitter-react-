@@ -8,6 +8,7 @@ import { Button } from "../components/button";
 
 interface Tweet {
   id: string;
+  userId?: string;
   nome: string;
   arroba: string;
   texto: string;
@@ -25,24 +26,6 @@ export function Feed() {
   const token = localStorage.getItem("token");
   const loggedUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const carregarRespostasDoTweet = async (tweetId: string) => {
-    try {
-      const res = await api.get(`/auth/tweets/${tweetId}`);
-      const dados = res.data.data || res.data;
-
-      const listaDeRespostas = dados.replies || dados.respostas || [];
-
-      if (Array.isArray(listaDeRespostas)) {
-        setTweets((prevTweets) =>
-          prevTweets.map((t) =>
-            t.id === tweetId ? { ...t, respostas: listaDeRespostas } : t,
-          ),
-        );
-      }
-    } catch (e) {
-      console.error("Erro ao buscar respostas:", e);
-    }
-  };
     const buscarRespostas = async (tweetId: string) => {
     try {
       const res = await api.get(`/auth/tweets/${tweetId}/replies`);
@@ -74,6 +57,7 @@ export function Feed() {
           id: t.id,
           nome: t.user?.name || "Usuário",
           arroba: (t.user?.username || "user").trim(),
+          userId: t.userId || t.user?.id,
           texto: t.content || t.texto,
           likes: t.likes ? t.likes.length : 0,
           euCurti:
@@ -119,19 +103,17 @@ export function Feed() {
     }
   };
 
-  const handleReply = async (tweetId: string) => {
-    const texto = prompt("Digite sua resposta:");
-    if (!texto || !texto.trim()) return;
+const handleReply = async (tweetId: string) => {
+  const texto = prompt("Digite sua resposta:");
+  if (!texto || !texto.trim()) return;
 
-    try {
-      await api.post(`/auth/tweets/${tweetId}/reply`, { content: texto });
-      await carregarTweets();
-      await carregarRespostasDoTweet(tweetId);
-    } catch (error) {
-      console.error("Erro ao responder:", error);
-      alert("Erro ao enviar resposta.");
-    }
-  };
+  try {
+    await api.post(`/auth/tweets/${tweetId}/reply`, { content: texto });
+    await carregarTweets(); 
+  } catch (error) {
+    console.error("Erro ao responder:", error);
+  }
+};
   const handleDelete = async (tweetId: string) => {
   if (!window.confirm("Deseja realmente excluir?")) return;
 
@@ -211,6 +193,7 @@ export function Feed() {
   {tweets.map((tweet) => {
     const respostasArray = tweet.respostas || [];
     const temRespostas = respostasArray.length > 0;
+    const ehMeuTweetPrincipal = tweet.userId === loggedUser.id;
 
     return (
       <div
@@ -218,34 +201,45 @@ export function Feed() {
         style={{ borderBottom: temRespostas ? "none" : `1px solid ${theme.border}` }}
       >
         <TweetCard
-          tweet={tweet}
+          tweet={{
+            ...tweet,
+            userId: tweet.userId
+          }}
           theme={theme}
           onLike={handleLike}
           onReply={handleReply}
+          onDelete={ehMeuTweetPrincipal ? handleDelete : undefined}
           hasReply={temRespostas} 
         />
-{temRespostas &&
-  respostasArray.map((reply: any, index: number) => (
-    <TweetCard
-      key={reply.id}
-      tweet={{
-        id: reply.id,
-        nome: reply.user?.name || "Usuário",
-        arroba: reply.user?.username || "user",
-        texto: reply.content || reply.texto,
-        likes: reply.likes ? reply.likes.length : 0,
-        euCurti: reply.likes?.some((l: any) => l.userId === loggedUser.id) || false,
-        respostas: [],
-        quantidadeRespostas: reply._count?.replies || 0, 
-      }}
-      theme={theme}
-      onLike={handleLike}
-      onDelete={handleDelete}
-      onReply={handleReply}
-      isReply={true}          
-      hasReply={index !== respostasArray.length - 1} 
-    />
-  ))}
+
+        {temRespostas &&
+          respostasArray.map((reply: any, index: number) => {
+            const donoDaRespostaId = reply.userId || reply.user?.id;
+            const ehMinhaResposta = donoDaRespostaId === loggedUser.id;
+
+            return (
+              <TweetCard
+                key={reply.id}
+                tweet={{
+                  id: reply.id,
+                  nome: reply.user?.name || "Usuário",
+                  arroba: reply.user?.username || "user",
+                  texto: reply.content || reply.texto,
+                  userId: donoDaRespostaId, 
+                  likes: reply.likes ? reply.likes.length : 0,
+                  euCurti: reply.likes?.some((l: any) => l.userId === loggedUser.id) || false,
+                  respostas: [],
+                  quantidadeRespostas: reply._count?.replies || 0, 
+                }}
+                theme={theme}
+                onLike={handleLike}
+                onDelete={ehMinhaResposta ? handleDelete : undefined}
+                onReply={handleReply}
+                isReply={true}          
+                hasReply={index !== respostasArray.length - 1} 
+              />
+            );
+          })}
       </div>
     );
   })}

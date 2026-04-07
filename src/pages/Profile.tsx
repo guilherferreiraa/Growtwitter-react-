@@ -6,10 +6,9 @@ import { TweetCard } from "../components/TweetCard";
 
 export function Profile() {
   const navigate = useNavigate();
-  const { id } = useParams(); 
+  const { id } = useParams(); // Pega o ID da URL se existir
   const [userTweets, setUserTweets] = useState<any[]>([]);
   const [profileUser, setProfileUser] = useState<any>(null);
-  
 
   const userRaw = localStorage.getItem("user");
   const loggedUser = userRaw ? JSON.parse(userRaw) : null;
@@ -22,45 +21,78 @@ export function Profile() {
     card: isDarkMode ? "#16181c" : "#f7f9f9",
   };
 
-useEffect(() => {
-  const carregarDados = async () => {
-    const targetId = id || JSON.parse(localStorage.getItem("user") || "{}")?.id;
+  useEffect(() => {
+    const carregarDados = async () => {
+      // Se não tiver ID na URL, usa o ID do usuário logado (Meu Perfil)
+      const targetId = id || loggedUser?.id;
 
-    if (!targetId || targetId === "undefined") return;
+      if (!targetId || targetId === "undefined") return;
 
+      try {
+        const [tweetRes, userRes] = await Promise.all([
+          api.get(`/auth/tweets/user/${targetId}`),
+          api.get(`/auth/users/${targetId}`),
+        ]);
+        
+        // Garante que pegamos o array de dados corretamente
+        const tweetsData = tweetRes.data.data || tweetRes.data;
+        setUserTweets(Array.isArray(tweetsData) ? tweetsData : []);
+        setProfileUser(userRes.data);
+      } catch (e) {
+        console.error("Erro ao carregar perfil:", e);
+      }
+    };
+
+    carregarDados();
+  }, [id, loggedUser?.id]);
+
+  const handleLike = async (tweetId: string) => {
     try {
-      const [tweetRes, userRes] = await Promise.all([
-        api.get(`/auth/tweets/user/${targetId}`),
-        api.get(`/auth/users/${targetId}`)
-      ]);
-      setUserTweets(tweetRes.data.data || tweetRes.data);
-      setProfileUser(userRes.data);
-    } catch (e) {
-      console.error("Erro ao carregar perfil:", e);
+      const t = userTweets.find((item) => item.id === tweetId);
+      const jaCurtiu = t?.likes?.some((l: any) => l.userId === loggedUser?.id);
+
+      if (jaCurtiu) {
+        await api.delete(`/auth/unlike/${tweetId}`);
+      } else {
+        await api.post(`/auth/like/${tweetId}`);
+      }
+      
+      // Atualização otimista da UI
+      setUserTweets((prev) =>
+        prev.map((tweet) => {
+          if (tweet.id === tweetId) {
+            const novosLikes = jaCurtiu
+              ? tweet.likes.filter((l: any) => l.userId !== loggedUser?.id)
+              : [...(tweet.likes || []), { userId: loggedUser?.id }]; 
+            return { ...tweet, likes: novosLikes };
+          }
+          return tweet;
+        }),
+      );
+    } catch (err) {
+      console.error("Erro ao curtir:", err);
     }
   };
 
-  carregarDados();
-}, [id]);
+  const handleCommentSync = (tweetId: string) => {
+    setUserTweets((prev) =>
+      prev.map((tweet) => {
+        if (tweet.id === tweetId) {
+          return { 
+            ...tweet, 
+            quantidadeRespostas: (tweet.quantidadeRespostas || 0) + 1 
+          };
+        }
+        return tweet;
+      })
+    );
+  };
 
-  const handleLike = async (tweetId: string) => {
-  try {
-    const t = userTweets.find(item => item.id === tweetId);
-    const jaCurtiu = t?.likes?.some((l: any) => l.userId === loggedUser?.id);
-
-    if (jaCurtiu) {
-      await api.delete(`/auth/unlike/${tweetId}`);
-    } else {
-      await api.post(`/auth/like/${tweetId}`);
-    }
-
-  } catch (err) {
-    console.error("Erro ao curtir:", err);
-  }
-};
-
-const displayUser = profileUser || loggedUser;
+  const displayUser = profileUser || loggedUser;
   if (!displayUser) return null;
+
+  // Verifica se o perfil visualizado pertence ao usuário logado
+  const ehMeuPerfil = !id || id === loggedUser?.id;
 
   return (
     <div
@@ -70,6 +102,7 @@ const displayUser = profileUser || loggedUser;
         minHeight: "100vh",
         backgroundColor: theme.bg,
         color: theme.text,
+        fontFamily: "sans-serif"
       }}
     >
       <SideBar loggedUser={loggedUser} theme={theme} />
@@ -91,11 +124,12 @@ const displayUser = profileUser || loggedUser;
             top: 0,
             backgroundColor: theme.bg,
             zIndex: 999,
+            borderBottom: `1px solid ${theme.border}`
           }}
         >
           <div
             onClick={() => navigate("/home")}
-            style={{ cursor: "pointer", fontSize: "22px", padding: "10px" }}
+            style={{ cursor: "pointer", fontSize: "22px", padding: "5px" }}
           >
             ←
           </div>
@@ -113,18 +147,16 @@ const displayUser = profileUser || loggedUser;
           <div style={{ height: "150px", backgroundColor: "#333" }}></div>
           <div style={{ padding: "15px", marginTop: "-50px" }}>
             <img
-              src={`https://github.com/${displayUser.username}.png`}
+              src={`https://github.com/${displayUser.username?.replace("@", "").trim().toLowerCase()}.png`}
               style={{
                 width: "80px",
                 height: "80px",
                 borderRadius: "50%",
                 border: `4px solid ${theme.bg}`,
                 objectFit: "cover",
+                backgroundColor: "#fff"
               }}
-              onError={(e) =>
-                (e.currentTarget.src =
-                  "https://cdn-icons-png.flaticon.com/512/149/149071.png")
-              }
+              onError={(e) => (e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png")}
             />
             <div style={{ marginTop: "10px" }}>
               <div style={{ fontWeight: "bold", fontSize: "20px" }}>
@@ -135,38 +167,50 @@ const displayUser = profileUser || loggedUser;
           </div>
         </section>
 
-        <section
-          style={{ borderTop: `1px solid ${theme.border}`, marginTop: "10px" }}
-        >
-{userTweets.length > 0 ? (
-  userTweets
-    .filter((t: any) => !t.tweet_original_id) 
-    .map((tweet: any) => (
-      
-      <TweetCard
-        key={tweet.id}
-        theme={theme}
-        onLike={() => handleLike(tweet.id)} 
-        tweet={{
-          id: tweet.id,
-          nome: profileUser?.name || loggedUser?.name,
-          arroba: profileUser?.username || loggedUser?.username,
-          texto: tweet.content || tweet.texto,
-          likes: tweet.likes?.length || 0,
-          euCurti: tweet.likes?.some((l: any) => l.userId === loggedUser?.id) || false,
-          quantidadeRespostas: tweet.replies?.length || 0,
-        }}
-      />
-    ))
-) : (
-  <div style={{ padding: "40px", textAlign: "center", color: "#71767b" }}>
-    Nenhum tweet encontrado.
-  </div>
-)}
+        <section style={{ borderTop: `1px solid ${theme.border}`, marginTop: "10px" }}>
+          {userTweets.length > 0 ? (
+            userTweets.map((tweet: any) => (
+              <TweetCard
+                key={tweet.id}
+                theme={theme}
+                onLike={() => handleLike(tweet.id)}
+                onCommentSuccess={() => handleCommentSync(tweet.id)}
+                // Resposta ativa no perfil
+                onReply={async (tweetId) => {
+                  const texto = prompt("Digite sua resposta:");
+                  if (!texto || !texto.trim()) return;
+                  try {
+                    await api.post(`/auth/tweets/${tweetId}/reply`, { content: texto });
+                    handleCommentSync(tweetId);
+                  } catch (e) { console.error(e); }
+                }}
+                onDelete={ehMeuPerfil ? async (tweetId) => {
+                  if (!window.confirm("Deseja excluir?")) return;
+                  try {
+                    await api.delete(`/auth/tweets/${tweetId}`);
+                    setUserTweets(prev => prev.filter(t => t.id !== tweetId));
+                  } catch { alert("Erro ao excluir"); }
+                } : undefined}
+                tweet={{
+                  id: tweet.id,
+                  userId: displayUser.id,
+                  nome: displayUser.name,
+                  arroba: displayUser.username,
+                  texto: tweet.content || tweet.texto,
+                  likes: tweet.likes?.length || 0,
+                  euCurti: tweet.likes?.some((l: any) => l.userId === loggedUser?.id) || false,
+                  quantidadeRespostas: tweet.quantidadeRespostas ?? (tweet._count?.replies || 0),
+                }}
+              />
+            ))
+          ) : (
+            <div style={{ padding: "40px", textAlign: "center", color: "#71767b" }}>
+              Nenhum tweet encontrado.
+            </div>
+          )}
         </section>
       </main>
-      <aside style={{ width: "350px" }} />
+      <aside style={{ width: "350px", padding: "20px" }} />
     </div>
   );
-  
 }
