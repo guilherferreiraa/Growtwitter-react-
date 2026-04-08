@@ -1,6 +1,6 @@
 
 import type { Request, Response } from "express";
-import { FollowService } from "../services/followService";
+import { FollowService } from "../services/followService.js";
 
 const followService = new FollowService();
 

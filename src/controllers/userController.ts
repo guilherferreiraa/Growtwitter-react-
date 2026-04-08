@@ -1,8 +1,7 @@
-
 import type { Request, Response } from "express";
-import { UserService } from "../services/userService";
+import { UserService } from "../services/userService.js";
 import jwt from "jsonwebtoken";
-import { prisma } from "../database/prisma.database";
+import { prisma } from "../database/prisma.database.js";
 const userService = new UserService();
 
 export class UserController {
