@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.use("/auth", userRouter);     
 app.use("/auth", tweetRouter);  
-app.use("/follow", followRouter); 
+app.use("/auth", followRouter); 
 
 export default app;
 
