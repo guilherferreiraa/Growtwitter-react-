@@ -92,18 +92,6 @@ export function Search() {
               <span style={{ fontSize: "0.8rem", color: "#71767b" }}>
                 Esportes · Em alta
               </span>
-              <div
-                style={{
-                  fontWeight: "bold",
-                  margin: "2px 0",
-                  fontSize: "16px",
-                }}
-              >
-                Libertadores
-              </div>
-              <span style={{ fontSize: "0.8rem", color: "#71767b" }}>
-                45.3K Tweets
-              </span>
             </div>
           </div>
         </section>
