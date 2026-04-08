@@ -1,4 +1,4 @@
-import { prisma } from "../database/prisma.database.js";
+import { prisma } from "../database/prisma.database";
 
 export class FollowService {
   async follow(followerId: string, followingId: string) {

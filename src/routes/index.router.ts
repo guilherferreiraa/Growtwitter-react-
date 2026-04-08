@@ -1,6 +1,6 @@
 import { Router } from "express";
-import tweetRouter from "./tweet.router.js";
-import userRouter from "./user.router.js";
+import tweetRouter from "./tweet.router";
+import userRouter from "./user.router";
 
 const router = Router();
 

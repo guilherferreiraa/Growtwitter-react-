@@ -1,16 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "node"],
     "skipLibCheck": true,
     "esModuleInterop": true,
     "strict": true,
-    "noEmit": false,
-    "allowImportingTsExtensions": false,
-    "jsx": "react-jsx"
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "include": ["src/**/*"]
 }

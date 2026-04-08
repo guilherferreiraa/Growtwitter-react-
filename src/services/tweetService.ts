@@ -1,4 +1,4 @@
-import { prisma } from "../database/prisma.database.js";
+import { prisma } from "../database/prisma.database";
 
 export class TweetService {
   async create(content: string, userId: string, parentTweetId?: string) {

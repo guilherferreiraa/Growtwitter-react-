@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { TweetService } from "../services/tweetService.js";
-import { prisma } from "../database/prisma.database.js";
+import { TweetService } from "../services/tweetService";
+import { prisma } from "../database/prisma.database";
 
 const tweetService = new TweetService();
 
