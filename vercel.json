@@ -1,21 +1,29 @@
 {
   "version": 2,
   "builds": [
-    { "src": "src/server.ts", "use": "@vercel/node" },
-    { "src": "package.json", "use": "@vercel/static-build" }
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
   ],
-"routes": [
-  {
-    "src": "/auth/(.*)",
-    "dest": "src/server.ts"
-  },
-  {
-    "src": "/follow/(.*)",
-    "dest": "src/server.ts"
-  },
-  {
-    "src": "/(.*)",
-    "dest": "/index.html"
-  }
-]
+  "routes": [
+    {
+      "src": "/(auth|tweets)/(.*)",
+      "dest": "src/server.ts",
+      "check": true
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
 }
