@@ -102,4 +102,4 @@ Perfil de Usuário: Visualização de dados, tweets próprios e lista de seguido
 Clone o repositório:
 
 Bash
-git clone https://github.com/seu-usuario/seu-repositorio.git\\
+git clone https://github.com/seu-usuario/[seu-repositorio](https://github.com/guilherferreiraa/Growtwitter-react-).git\\
