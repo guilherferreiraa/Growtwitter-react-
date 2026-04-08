@@ -9,6 +9,8 @@ O Growtwitter é uma rede social completa inspirada no Twitter, onde usuários p
 Deploy Frontend: https://growtwitter-react-mu.vercel.app
 
 Documentação API (Postman/Insomnia): Utilize a URL base acima com os endpoints listados abaixo.
+
+
 https://desktop.postman.com/?desktopVersion=12.5.2&userId=48950583&teamId=10564348&region=us
 
 🛠️ Tecnologias Utilizadas
