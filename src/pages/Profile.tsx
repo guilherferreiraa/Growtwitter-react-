@@ -219,7 +219,7 @@ const fetchDados = useCallback(async () => {
               onReply={() => {}}
               onDelete={
                 ehMeuPerfil
-                  ? async (tweetId) => {
+                  ? async (tweetId: string) => {
                       if (window.confirm("Excluir?")) {
                         await api.delete(`/auth/tweets/${tweetId}`);
                         setUserTweets((prev) =>
