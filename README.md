@@ -46,13 +46,14 @@ Clone o repositório:
 
 Bash
 git clone https://github.com/guilherferreiraa/Growtwitter-react-.git
-Instale as dependências:
 
+
+Instale as dependências:
 Bash
 npm install
 Configure o arquivo .env com as suas credenciais do banco de dados e a JWT_SECRET.
 
-Inicie o projeto:
 
+Inicie o projeto:
 Bash
 npm run dev
