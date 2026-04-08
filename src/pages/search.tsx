@@ -87,11 +87,7 @@ export function Search() {
                 tecnologia
               </span>
             </div>
-
             <div style={{ padding: "15px", cursor: "pointer" }}>
-              <span style={{ fontSize: "0.8rem", color: "#71767b" }}>
-                Esportes · Em alta
-              </span>
             </div>
           </div>
         </section>
