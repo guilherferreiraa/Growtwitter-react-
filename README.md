@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+🚀 Growtwitter - Full Stack Project
+O Growtwitter é uma rede social completa inspirada no Twitter, onde usuários podem compartilhar ideias, seguir amigos e interagir com publicações. Este projeto foi desenvolvido como parte da formação Full Stack, integrando um Frontend em React com um Backend em Node.js.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔗 Links do Projeto
+Deploy Frontend: 🚀 Growtwitter - Full Stack Project
+O Growtwitter é uma rede social completa inspirada no Twitter, onde usuários podem compartilhar ideias, seguir amigos e interagir com publicações. Este projeto foi desenvolvido como parte da formação Full Stack, integrando um Frontend em React com um Backend em Node.js.
 
-Currently, two official plugins are available:
+🔗 Links do Projeto
+Deploy Frontend: https://growtwitter-react-mu.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Documentação API (Postman/Insomnia): Utilize a URL base acima com os endpoints listados abaixo.
+https://desktop.postman.com/?desktopVersion=12.5.2&userId=48950583&teamId=10564348&region=us
 
-## React Compiler
+🛠️ Tecnologias Utilizadas
+Frontend
+React.js + Vite (TypeScript)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Axios (Integração com API)
 
-## Expanding the ESLint configuration
+React Router DOM (Navegação)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Styled Components / CSS Modules (Estilização)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Backend
+Node.js + Express
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Prisma ORM (Persistência de dados)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+PostgreSQL / Supabase (Banco de dados)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+JWT (JSON Web Token) (Autenticação e Segurança)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+📋 Funcionalidades Implementadas
+Autenticação & Segurança
+Login: Autenticação via JWT. O token é armazenado no localStorage e enviado via interceptors do Axios.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Segurança de Rota: O ID do usuário logado é extraído diretamente do Token no Backend, impedindo que um usuário crie conteúdo em nome de outro.
+
+Tweets & Interações
+Feed Personalizado: A timeline exibe apenas os tweets do próprio usuário e das pessoas que ele segue.
+
+Criação de Tweets: Publicação de conteúdos de texto vinculados ao perfil.
+
+Sistema de Likes: Curtir e descurtir tweets em tempo real.
+
+Replies (Respostas): Possibilidade de responder a tweets específicos (vinculação via parentTweetId).
+
+Social
+Sistema de Follow/Unfollow: Seguir e deixar de seguir usuários para personalizar o feed.
+
+Perfil de Usuário: Visualização de dados, tweets próprios e lista de seguidores.
+
+⚙️ Como rodar o projeto localmente
+Clone o repositório:
+
+Bash
+git clone https://github.com/seu-usuario/seu-repositorio.git
+
+Documentação API (Postman/Insomnia): Utilize a URL base acima com os endpoints listados abaixo.
+
+🛠️ Tecnologias Utilizadas
+Frontend
+React.js + Vite (TypeScript)
+
+Axios (Integração com API)
+
+React Router DOM (Navegação)
+
+Styled Components / CSS Modules (Estilização)
+
+Backend
+Node.js + Express
+
+Prisma ORM (Persistência de dados)
+
+PostgreSQL / Supabase (Banco de dados)
+
+JWT (JSON Web Token) (Autenticação e Segurança)
+
+📋 Funcionalidades Implementadas
+Autenticação & Segurança
+Login: Autenticação via JWT. O token é armazenado no localStorage e enviado via interceptors do Axios.
+
+Segurança de Rota: O ID do usuário logado é extraído diretamente do Token no Backend, impedindo que um usuário crie conteúdo em nome de outro.
+
+Tweets & Interações
+Feed Personalizado: A timeline exibe apenas os tweets do próprio usuário e das pessoas que ele segue.
+
+Criação de Tweets: Publicação de conteúdos de texto vinculados ao perfil.
+
+Sistema de Likes: Curtir e descurtir tweets em tempo real.
+
+Replies (Respostas): Possibilidade de responder a tweets específicos (vinculação via parentTweetId).
+
+Social
+Sistema de Follow/Unfollow: Seguir e deixar de seguir usuários para personalizar o feed.
+
+Perfil de Usuário: Visualização de dados, tweets próprios e lista de seguidores.
+
+⚙️ Como rodar o projeto localmente
+Clone o repositório:
+
+Bash
+git clone https://github.com/seu-usuario/seu-repositorio.git\\
