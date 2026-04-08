@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/auth", userRouter);     
-app.use("/tweets", tweetRouter);  
+app.use("/auth/tweets", tweetRouter);  
 app.use("/follow", followRouter); 
 
 export default app;
