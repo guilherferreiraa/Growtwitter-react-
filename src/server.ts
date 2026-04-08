@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import userRouter from "./routes/user.router.ts";
-import tweetRouter from "./routes/tweet.router.ts";
-import followRouter from "./routes/follow.router.ts";
+import userRouter from "./routes/user.router";
+import tweetRouter from "./routes/tweet.router";
+import followRouter from "./routes/follow.router";
 
 const app = express();
 
