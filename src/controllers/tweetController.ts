@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { TweetService } from "../services/tweetService";
 import { prisma } from "../database/prisma.database";
 
-
 const tweetService = new TweetService();
 
 export class TweetController {
@@ -11,7 +10,8 @@ export class TweetController {
       const { content, parentTweetId } = req.body;
       const userId = (req as any).userId;
 
-      if (!content) return res.status(400).json({ error: "Conteúdo obrigatório." });
+      if (!content)
+        return res.status(400).json({ error: "Conteúdo obrigatório." });
 
       const tweet = await tweetService.create(content, userId, parentTweetId);
       return res.status(201).json(tweet);
@@ -23,7 +23,7 @@ export class TweetController {
   async feed(req: Request, res: Response) {
     try {
       const userId = (req as any).userId;
-      const tweets = await tweetService.findFollowerFeed(userId); 
+      const tweets = await tweetService.findFollowerFeed(userId);
       return res.status(200).json(tweets);
     } catch {
       return res.status(400).json({ error: "Erro ao carregar feed." });
@@ -52,12 +52,14 @@ export class TweetController {
 
   async unlike(req: Request, res: Response) {
     try {
-      const { id } = req.params; 
+      const { id } = req.params;
       const userId = (req as any).userId;
       const result = await tweetService.unlike(id as string, userId);
       return res.status(200).json(result);
     } catch {
-      return res.status(400).json({ error: "Erro ao remover curtida do tweet." });
+      return res
+        .status(400)
+        .json({ error: "Erro ao remover curtida do tweet." });
     }
   }
 
@@ -65,8 +67,8 @@ export class TweetController {
     try {
       const id = String(req.params.id);
       const userId = (req as any).userId;
-      await tweetService.delete(id, userId); 
-      
+      await tweetService.delete(id, userId);
+
       return res.status(200).json({ message: "Tweet removido com sucesso!" });
     } catch {
       return res.status(400).json({ error: "Erro ao excluir tweet." });
@@ -79,95 +81,87 @@ export class TweetController {
       const id = String(req.params.id);
       const userId = (req as any).userId;
 
-      if (!content) return res.status(400).json({ error: "Conteúdo obrigatório." });
+      if (!content)
+        return res.status(400).json({ error: "Conteúdo obrigatório." });
 
-      const reply = await tweetService.create(content, userId, id); 
+      const reply = await tweetService.create(content, userId, id);
       return res.status(201).json(reply);
     } catch {
       return res.status(400).json({ error: "Erro ao responder tweet." });
     }
   }
 
-async listReplies(req: Request, res: Response) {
-  const { id } = req.params; 
+  async listReplies(req: Request, res: Response) {
+    const { id } = req.params;
 
-  if(!id) {
-    return res.status(400).json({ error: "ID do tweet é obrigatório!"})
-  }
+    if (!id) {
+      return res.status(400).json({ error: "ID do tweet é obrigatório!" });
+    }
 
-  try {
-    const replies = await prisma.tweet.findMany({
-      where: {
-        parentTweetId: String(id),
-      },
-      include: {
-        user: true,   
-        likes: true,  
-      },
-      orderBy: {
-        createdAt: 'asc', 
-      }
-    });
-
-    return res.status(200).json(replies);
-  } catch {
-    return res.status(500).json({ error: "Erro ao buscar respostas" });
-  }
-}
-
-
-  async getFeed(req: Request, res: Response) {
     try {
-      const userId = (req as any).userId;
-
-      if (!userId) {
-        return res.status(401).json({ ok: false, message: "Não autorizado." });
-      }
-
-      const feed = await tweetService.findFeed(userId);
-
-      return res.status(200).json({
-        ok: true,
-        data: feed
+      const replies = await prisma.tweet.findMany({
+        where: {
+          parentTweetId: String(id),
+        },
+        include: {
+          user: true,
+          likes: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
       });
+
+      return res.status(200).json(replies);
     } catch {
-      return res.status(500).json({ ok: false, message: "Erro ao carregar feed." });
+      return res.status(500).json({ error: "Erro ao buscar respostas" });
     }
   }
-async getByUser(req: any, res: any) {
-  try {
-    const { userId } = req.params;
-    const tweets = await prisma.tweet.findMany({
-      where: { userId: userId },
-      include: {
-        likes: true,
-        _count: { select: { replies: true } }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
 
-    return res.json(tweets);
+async getFeed(req: Request, res: Response) {
+  try {
+    const userId = (req as any).userId;
+    const feed = await tweetService.findFeed(userId);
+
+    return res.status(200).json(feed); 
   } catch {
-    return res.status(500).json({ error: "Erro ao buscar tweets do usuário" });
+    return res.status(500).json({ error: "Erro ao carregar feed filtrado." });
   }
 }
+  async getByUser(req: any, res: any) {
+    try {
+      const { userId } = req.params;
+      const tweets = await prisma.tweet.findMany({
+        where: { userId: userId },
+        include: {
+          likes: true,
+          _count: { select: { replies: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
 
-async show(req: Request, res: Response) {
-  try {
-    const id = String(req.params.id);
-    const tweet = await prisma.tweet.findUnique({
-      where: { id },
-      include: {
-        replies: { include: { user: true } }, 
-        user: true,
-        likes: true
-      }
-    });
-    return res.json(tweet);
-  } catch {
-    return res.status(500).json({ message: "Erro ao buscar tweet" });
+      return res.json(tweets);
+    } catch {
+      return res
+        .status(500)
+        .json({ error: "Erro ao buscar tweets do usuário" });
+    }
   }
-}
 
-
+  async show(req: Request, res: Response) {
+    try {
+      const id = String(req.params.id);
+      const tweet = await prisma.tweet.findUnique({
+        where: { id },
+        include: {
+          replies: { include: { user: true } },
+          user: true,
+          likes: true,
+        },
+      });
+      return res.json(tweet);
+    } catch {
+      return res.status(500).json({ message: "Erro ao buscar tweet" });
+    }
+  }
 }

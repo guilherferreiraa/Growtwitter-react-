@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "back": "tsx watch src/server.ts",
-    "build": "tsc -b && vite build",
+    "build": "prisma generate && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

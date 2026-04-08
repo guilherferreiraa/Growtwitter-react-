@@ -95,6 +95,8 @@ export class UserController {
           id: true,
           name: true,
           username: true,
+          followers: true,
+          following: true
         },
       });
       if (!user) {

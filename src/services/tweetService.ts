@@ -21,34 +21,35 @@ export class TweetService {
     });
   }
 
-  async findFeed(userId: string) {
-    const following = await prisma.follow.findMany({
-      where: { followerId: userId },
-      select: { followingId: true },
-    });
-    const idsParaBuscar = following.map((f) => f.followingId);
-    idsParaBuscar.push(userId);
-    return await prisma.tweet.findMany({
-      where: {
-        userId: { in: idsParaBuscar },
-      },
-      orderBy: { createdAt: "desc" },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            avatarUrl: true,
-          },
-        },
-        likes: true,
-        _count: {
-          select: { replies: true },
+async findFeed(userId: string) {
+  const following = await prisma.follow.findMany({
+    where: { followerId: userId },
+    select: { followingId: true },
+  });
+
+  const idsParaBuscar = following.map((f) => f.followingId);
+  idsParaBuscar.push(userId); // Inclui você
+
+  return await prisma.tweet.findMany({
+    where: {
+      userId: { in: idsParaBuscar },
+      parentTweetId: null
+    },
+    orderBy: { createdAt: "desc" },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          avatarUrl: true,
         },
       },
-    });
-  }
+      likes: true,
+      _count: { select: { replies: true } },
+    },
+  });
+}
 
   async findAll() {
     return await prisma.tweet.findMany({
