@@ -28,7 +28,7 @@ async findFeed(userId: string) {
   });
 
   const idsParaBuscar = following.map((f) => f.followingId);
-  idsParaBuscar.push(userId); // Inclui você
+  idsParaBuscar.push(userId); 
 
   return await prisma.tweet.findMany({
     where: {

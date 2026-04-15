@@ -18,7 +18,7 @@ export function SideBar({ loggedUser, theme }: SideBarProps) {
 
   const isHome = location.pathname === "/home";
   const isExplore = location.pathname === "/explore";
-  const isProfile = location.pathname === "/profile"; // Nova constante
+  const isProfile = location.pathname === "/profile";
 
   return (
     <aside style={{ ...sidebarStyle, borderRightColor: theme.border }}>
