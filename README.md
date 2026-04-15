@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+🚀 Growtwitter - Full Stack Project
+O Growtwitter é uma rede social completa inspirada no Twitter, desenvolvida para permitir que usuários compartilhem ideias, sigam amigos e interajam com publicações em tempo real. Este projeto faz parte da formação Full Stack, integrando um ecossistema robusto entre Frontend e Backend.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔗 Links do Projeto
+Deploy Frontend: https://growtwitter-react-mu.vercel.app
 
-Currently, two official plugins are available:
+Documentação API: https://desktop.postman.com/?desktopVersion=12.5.2&userId=48950583&teamId=10564348&region=us
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🛠️ Tecnologias Utilizadas
+Frontend
+React.js + Vite (TypeScript)
 
-## React Compiler
+Axios (Integração com API e Interceptors para JWT)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React Router DOM (Gerenciamento de rotas SPA)
 
-## Expanding the ESLint configuration
+Styled Components / CSS Modules (Estilização moderna)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Backend
+Node.js + Express
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Prisma ORM (Modelagem e persistência de dados)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+PostgreSQL / Supabase (Banco de dados relacional)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+JWT (JSON Web Token) (Autenticação e segurança de rotas)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+📋 Funcionalidades Implementadas
+🛡️ Autenticação & Segurança
+Login Seguro: Autenticação via JWT com armazenamento de token no localStorage.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Proteção de Autoria: O sistema extrai o ID do usuário diretamente do Token no Backend, garantindo que um usuário não possa criar ou deletar conteúdos em nome de terceiros.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+🐦 Tweets & Interações
+Feed Personalizado: A timeline é filtrada para exibir apenas tweets do próprio usuário e das pessoas que ele segue.
+
+Sistema de Interação: Criação de tweets, sistema de likes (curtir/descurtir) e respostas (replies) vinculadas ao post original.
+
+👥 Social
+Follow/Unfollow: Sistema dinâmico para seguir usuários e personalizar a experiência do feed.
+
+Perfis Detalhados: Visualização de dados do perfil, lista de seguidores e histórico de tweets.
+
+⚙️ Como rodar o projeto localmente
+Clone o repositório:
+
+Bash
+git clone https://github.com/guilherferreiraa/Growtwitter-react-.git
+
+
+Instale as dependências:
+Bash
+npm install
+Configure o arquivo .env com as suas credenciais do banco de dados e a JWT_SECRET.
+
+
+Inicie o projeto:
+Bash
+npm run dev
